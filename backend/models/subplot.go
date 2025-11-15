@@ -10,9 +10,10 @@ type SubPlot struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-func NewSubplot(id int, title, content, status, createdAt, updatedAt string) *SubPlot {
+func NewSubplot(id, plotID int, title, content, status, createdAt, updatedAt string) *SubPlot {
 	return &SubPlot{
 		ID:        id,
+		PlotID:    plotID,
 		Title:     title,
 		Content:   content,
 		Status:    status,
