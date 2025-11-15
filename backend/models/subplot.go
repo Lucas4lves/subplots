@@ -2,6 +2,7 @@ package models
 
 type SubPlot struct {
 	ID        int    `json:"subplot_id"`
+	PlotID    int    `json:"plot_id"`
 	Title     string `json:"subplot_title"`
 	Content   string `json:"subplot_content"`
 	Status    string `json:"subplot_status"`
