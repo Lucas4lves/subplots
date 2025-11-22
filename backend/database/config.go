@@ -29,3 +29,24 @@ func NewDatabaseConfig(driverHandler, connString string) *DatabaseConfig {
 		Driver: db,
 	}
 }
+
+func (dc *DatabaseConfig) CreatePlotsTable() error {
+
+	sql := `
+	    create table if not exists plots (
+			id serial primary key,
+			title varchar(255) unique not null,
+			story varchar(512) not null,
+			created_at timestamp with time zone default now(),
+			updated_at timestamp with time zone default now()
+	);
+	`
+
+	_, err := dc.Driver.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
