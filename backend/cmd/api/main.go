@@ -26,6 +26,7 @@ func main() {
 	dc := container.NewDependencyContainer(dbCfg.Driver)
 
 	server.GET("/plots", dc.PlotController.GetAll)
+	server.POST("/plots", dc.PlotController.CreatePlot)
 
 	server.Run("0.0.0.0:" + env.PORT)
 }

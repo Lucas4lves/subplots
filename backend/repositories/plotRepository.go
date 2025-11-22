@@ -22,6 +22,46 @@ func NewPlotRepository(driver *sql.DB) *PlotRepository {
 	}
 }
 
+func (pr *PlotRepository) Insert(plot *models.Plot) error {
+	tx, err := pr.Driver.Begin()
+
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	defer tx.Rollback()
+
+	sql := `
+		insert into plots (title, story, status) 
+		values ($1,$2,$3);
+	`
+
+	stmt, err := tx.Prepare(sql)
+
+	if err != nil {
+
+		log.Println(err)
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(plot.Title, plot.Story, plot.Status)
+
+	if err != nil {
+
+		log.Println(err)
+		tx.Rollback()
+
+		return err
+	}
+
+	tx.Commit()
+
+	return nil
+}
+
 func (pr *PlotRepository) SelectAll() ([]*models.Plot, error) {
 
 	var results []*models.Plot

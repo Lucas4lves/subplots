@@ -37,6 +37,7 @@ func (dc *DatabaseConfig) CreatePlotsTable() error {
 			id serial primary key,
 			title varchar(255) unique not null,
 			story varchar(512) not null,
+			status boolean default true,
 			created_at timestamp with time zone default now(),
 			updated_at timestamp with time zone default now()
 	);
