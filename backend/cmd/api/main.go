@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Lucas4lves/subplots/database"
 	"github.com/Lucas4lves/subplots/internal/container"
 	"github.com/Lucas4lves/subplots/utils"
@@ -13,9 +15,17 @@ func main() {
 
 	dbCfg := database.NewDatabaseConfig("postgres", env.DSN)
 
+	err := dbCfg.CreatePlotsTable()
+
+	if err != nil {
+		log.Println(err)
+	}
+
 	defer dbCfg.Driver.Close()
 
 	dc := container.NewDependencyContainer(dbCfg.Driver)
+
+	server.GET("/plots", dc.PlotController.GetAll)
 
 	server.Run("0.0.0.0:" + env.PORT)
 }
