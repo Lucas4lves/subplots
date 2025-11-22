@@ -22,6 +22,17 @@ func NewPlotService(repo *repositories.PlotRepository) *PlotService {
 	}
 }
 
+func (ps *PlotService) Create(plot *models.Plot) error {
+	err := ps.Repository.Insert(plot)
+
+	if err != nil {
+		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
 func (ps *PlotService) FindAll() ([]*models.Plot, error) {
 	data, err := ps.Repository.SelectAll()
 
