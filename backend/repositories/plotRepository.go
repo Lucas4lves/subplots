@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"log"
+	"strconv"
 
 	"github.com/Lucas4lves/subplots/models"
 )
@@ -20,6 +21,61 @@ func NewPlotRepository(driver *sql.DB) *PlotRepository {
 	return &PlotRepository{
 		Driver: driver,
 	}
+}
+
+func (pr *PlotRepository) UpdateOne(id int, plot *models.PlotUpdateRequest) error {
+	sql := `update plots set `
+	args := []interface{}{}
+
+	idStr := strconv.Itoa(id)
+	updatedFields := make([]string, 0)
+
+	if plot.Title != nil {
+		updatedFields = append(updatedFields, "title")
+		args = append(args, "title")
+	}
+
+	if plot.Story != nil {
+		updatedFields = append(updatedFields, "story")
+		args = append(args, "story")
+	}
+
+	if plot.Status == nil {
+		updatedFields = append(updatedFields, "status")
+		args = append(args, "status")
+	}
+
+	updatedFields = append(updatedFields, "updated_at")
+	args = append(args, "updated_at")
+
+	for idx, val := range updatedFields {
+		sql += val + " = $" + strconv.Itoa(idx+1) + ","
+	}
+
+	sql += "where id = " + idStr + ";"
+
+	tx, err := pr.Driver.Begin()
+
+	if err != nil {
+		return err
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(sql)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(args...)
+
+	tx.Commit()
+
+	return nil
+
 }
 
 func (pr *PlotRepository) Insert(plot *models.Plot) error {

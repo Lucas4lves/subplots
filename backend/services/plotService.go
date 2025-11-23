@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+	"time"
 
 	"github.com/Lucas4lves/subplots/models"
 	"github.com/Lucas4lves/subplots/repositories"
@@ -27,6 +28,19 @@ func (ps *PlotService) Create(plot *models.Plot) error {
 
 	if err != nil {
 		log.Println(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (ps *PlotService) Update(id int, plot *models.PlotUpdateRequest) error {
+
+	plot.Updated_at = time.Now().Format(time.RFC3339)
+
+	err := ps.Repository.UpdateOne(id, plot)
+
+	if err != nil {
 		return err
 	}
 
